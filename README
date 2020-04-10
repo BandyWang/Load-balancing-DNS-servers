@@ -1,0 +1,20 @@
+0. Please write down the full names and netids of all your team members.
+    Bandy Wang (bw307) and WeiJi Zheng (wz232).
+
+1. Briefly discuss how you implemented the LS functionality of tracking which TS responded to the query and timing out
+   if neither TS responded.
+   From LS, two child threads are used to send the query to ts1 and ts2. The seperate connections that send the query
+   would have a 5 second timeout interval if there is no response from the TS. There will be a flag (called Event in the
+   code) that would set if a thread would finish first. The parent thread will keep on checking on this flag every
+   millisecond, and will kill both threads once the flag is set.
+
+2. Are there known issues or functions that aren't working currently in your
+   attached code? If so, explain.
+   No issues known of.
+
+3. What problems did you face developing code for this project?
+   An issue was that python inherently disabled killing threads before the thread ended naturally. We found a way around
+   it by creating a custom thread class.
+
+4. What did you learn by working on this project?
+   We learn a but more about multi-threading.

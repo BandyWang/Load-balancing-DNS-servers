@@ -49,7 +49,7 @@ def perform_queries(ls_conn):
         ls_conn.sendall(query.encode())
         ls_reply = ls_conn.recv(2048)
         time_end = time.time()
-        print "[Client] Result: {}. Total Time: {:.2f} seconds.".format(ls_reply, time_end - time_start)
+        print "[Client] Result: {}. Total Time: {:.3f} seconds.".format(ls_reply, time_end - time_start)
         OUTPUT_FILE.write(query + " " + ls_reply + '\n')
     ls_conn.close()
     print("[Client] All queries completed! Please check RESOLVED.txt for validation.")

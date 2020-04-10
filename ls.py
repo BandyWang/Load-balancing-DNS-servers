@@ -86,7 +86,7 @@ def run_ls_server():
                 thread2 = ThreadWithKill(target=lookup, args=(ts2_hostname, ts2_listen_port, msg, results, event))
                 thread2.start()
                 while not event.is_set():
-                    time.sleep(0.1)
+                    time.sleep(0.001)
 
                 if thread1.is_alive():
                     thread1.kill()
@@ -94,7 +94,7 @@ def run_ls_server():
                     thread2.kill()
                 time_end = time.time()
                 total_time = time_end - time_start
-                print("[LS] Replying to client with: {}. Total Time: {:.2f} seconds.".format(results[0], total_time))
+                print("[LS] Replying to client with: {}. Total Time: {:.3f} seconds.".format(results[0], total_time))
                 csockid.send(results[0])
             else:
                 break
