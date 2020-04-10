@@ -2,9 +2,14 @@ import sys
 import socket
 
 #  GLOBAL VARIABLES
-HNS_FILEPATH = "PROJI-HNS.txt"
+import time
+
+HNS_FILEPATH = "PROJ2-HNS.txt"
 QUERIES = list()
 OUTPUT_FILE = open("RESOLVED.txt", "w")
+
+""" command line input : python client.py <lsHostname> <lsListenPort> """
+
 
 def check_for_input_errors():
     if len(sys.argv) != 3:
@@ -37,19 +42,25 @@ def establish_connection(hostname, port):
     return conn
 
 
-
 def perform_queries(ls_conn):
-    ## sends querys to lsServer
-    ## writes result into resolved.txt
-
+    for query in QUERIES:
+        print "[Client] Now querying: " + query
+        time_start = time.time()
+        ls_conn.sendall(query.encode())
+        ls_reply = ls_conn.recv(2048)
+        time_end = time.time()
+        print "[Client] Result: {}. Total Time: {:.2f} seconds.".format(ls_reply, time_end - time_start)
+        OUTPUT_FILE.write(query + " " + ls_reply + '\n')
+    ls_conn.close()
+    print("[Client] All queries completed! Please check RESOLVED.txt for validation.")
 
 
 if __name__ == "__main__":
     if not check_for_input_errors():
-        lsHostName = int(sys.argv[1])
+        lsHostName = sys.argv[1]
         lsListenPort = int(sys.argv[2])
 
         populate_queries()
-        rs_conn = establish_connection(lsHostName, lsListenPort)
-        perform_queries(rs_conn)
+        ls_conn = establish_connection(lsHostName, lsListenPort)
+        perform_queries(ls_conn)
         OUTPUT_FILE.close()

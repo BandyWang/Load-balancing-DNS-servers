@@ -1,9 +1,10 @@
 import sys
 import socket
 
-TS_FILEPATH = "PROJI-DNSTS1.txt"
+TS_FILEPATH = "PROJ2-DNSTS1.txt"
 DNS_TABLE = dict()
 
+""" command line input: python ts1.py <ts1ListenPort>  """
 
 def check_for_input_errors():
     if len(sys.argv) != 2:
@@ -24,6 +25,8 @@ def populate_DNS_table():
         while line:
             line = line.rstrip()
             split = line.split(" ")
+            if len(split) != 3:
+                continue
             DNS_TABLE[split[0].lower()] = [split[1], split[2]]
             if split[2] == 'NS':
                 DNS_TABLE['NS'] = [split[0], 'NS']
@@ -32,32 +35,35 @@ def populate_DNS_table():
         fp.close()
 
 
-def establish_server_and_serve(tsListenPort):
+def establish_server_and_serve():
     try:
         ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     except socket.error as err:
         exit()
-    server_binding = ('', tsListenPort)
+    server_binding = ('', ts1_listen_port)
     ss.bind(server_binding)
 
     while True:
-        print("[TS] Now listening...")
+        print("[TS1] Now listening for clients...")
         ss.listen(1)
         csockid, addr = ss.accept()
-        print("[TS] Connected to client {}!".format(addr));
+        print("[TS1] Connected to client {}!".format(addr));
         while True:
             msg = csockid.recv(2048).decode()
-            print("[TS] Recieved from client the following message: " + msg)
+            print("[TS1] Received from client the following message: " + msg)
             if msg:
                 if msg in DNS_TABLE:
                     reply = DNS_TABLE[msg][0] + " " + DNS_TABLE[msg][1]
-                    print("[TS] Replying to client with: "+ reply)
+                    print("[TS1] Query Found! Replying to client with: " + msg)
                     csockid.send(reply)
-                continue
+                    break
+                else:
+                    print "[TS1] Query not found! Do nothing!"
+                    break
 
 
 if __name__ == "__main__":
     if not check_for_input_errors():
         populate_DNS_table()
-        tsListenPort = int(sys.argv[1])
-        establish_server_and_serve(tsListenPort)
+        ts1_listen_port = int(sys.argv[1])
+        establish_server_and_serve()
